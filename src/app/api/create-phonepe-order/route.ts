@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
       
       // Generate unique order ID
       const merchantOrderId = generatePhonePeOrderId();
-      const baseUrl = "https://www.ticketr.yoloclub.in";
+      const baseUrl = "https://ticketr.yoloclub.in";
       const redirectUrl = `${baseUrl}/payment-result?orderId=${merchantOrderId}`;
       
       // Return mock PhonePe payment interface data
@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
     const amountInPaisa = convertToPaisa(numericAmount);
     
     // Create redirect URLs
-    const baseUrl = "https://www.ticketr.yoloclub.in";
+    const baseUrl = "https://ticketr.yoloclub.in";
     const redirectUrl = `${baseUrl}/payment-result?orderId=${merchantOrderId}`;
     
     // Create meta info for tracking
@@ -213,7 +213,7 @@ export async function POST(req: NextRequest) {
       // Fallback to mock mode if real PhonePe fails
       console.log("🔄 FALLBACK: Switching to mock mode due to PhonePe API failure");
       
-      const baseUrl = "https://www.ticketr.yoloclub.in";
+      const baseUrl = "https://ticketr.yoloclub.in";
       const redirectUrl = `${baseUrl}/payment-result?orderId=${merchantOrderId}`;
       
       return NextResponse.json({
