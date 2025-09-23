@@ -29,7 +29,7 @@ export async function createPhonePeOrder({
     }
 
     const merchantTransactionId = `ticket_${eventId}_${userId}_${Date.now()}`;
-    const redirectUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/tickets/purchase-success`;
+    const redirectUrl = `https://www.ticketr.yoloclub.in/tickets/purchase-success`;
     const callbackUrl = `${process.env.NEXT_PUBLIC_BASE_URL}/api/webhooks/phonepe`;
 
     // BYPASS MODE: Check if we should bypass PhonePe API

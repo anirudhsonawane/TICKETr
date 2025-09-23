@@ -36,7 +36,7 @@ export default function TermsAndConditionsPage() {
       <p className="text-gray-600 mb-6">Last updated on 09/Sep/2025</p>
 
       <p className="mb-4">
-        This Privacy Policy outlines the practices of MCBL (“we,” “us,” or “our”) regarding the collection, use, and disclosure of personal information when you use our services (“Services”), including our website located at https://ticketr-yoloclub.in and any related applications.
+        This Privacy Policy outlines the practices of MCBL (“we,” “us,” or “our”) regarding the collection, use, and disclosure of personal information when you use our services (“Services”), including our website located at https://ticketr.yoloclub.in and any related applications.
       </p>
 
       <ul className="list-disc list-inside mb-4 space-y-2">

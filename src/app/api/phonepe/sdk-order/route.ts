@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
       
       // Generate unique order ID
       const merchantOrderId = generatePhonePeOrderId();
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+      const baseUrl = "https://www.ticketr.yoloclub.in";
       const defaultRedirectUrl = `${baseUrl}/tickets/purchase-success?orderId=${merchantOrderId}`;
       const finalRedirectUrl = redirectUrl || defaultRedirectUrl;
       
@@ -110,7 +110,7 @@ export async function POST(req: NextRequest) {
     const amountInPaisa = convertToPaisa(numericAmount);
     
     // Create redirect URL
-    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+    const baseUrl = "https://www.ticketr.yoloclub.in";
     const defaultRedirectUrl = `${baseUrl}/tickets/purchase-success?orderId=${merchantOrderId}`;
     const finalRedirectUrl = redirectUrl || defaultRedirectUrl;
 
@@ -189,7 +189,7 @@ export async function POST(req: NextRequest) {
       // Fallback to mock mode if real PhonePe fails
       console.log("🔄 FALLBACK: Switching to mock mode due to PhonePe API failure");
       
-      const baseUrl = process.env.NEXT_PUBLIC_BASE_URL;
+      const baseUrl = "https://www.ticketr.yoloclub.in";
       const fallbackRedirectUrl = `${baseUrl}/tickets/purchase-success?orderId=${merchantOrderId}`;
       
       return NextResponse.json({
