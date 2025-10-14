@@ -18,21 +18,6 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID || '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-      authorization: {
-        params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code"
-        }
-      },
-      profile(profile) {
-        return {
-          id: profile.sub,
-          name: profile.name,
-          email: profile.email,
-          image: profile.picture,
-        };
-      },
     }),
     CredentialsProvider({
       id: 'phone',
@@ -70,7 +55,12 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user, account, profile }) {
-      await dbConnect();
+      try {
+        await dbConnect();
+      } catch (error) {
+        console.error('Database connection error in signIn:', error);
+        return false;
+      }
 
       try {
         // Determine provider
@@ -112,6 +102,12 @@ export const authOptions: NextAuthOptions = {
         return true;
       } catch (error) {
         console.error('Error in signIn callback:', error);
+        console.error('Error details:', {
+          message: error.message,
+          stack: error.stack,
+          user: user?.email,
+          provider: account?.provider
+        });
         return false;
       }
     },
@@ -147,5 +143,5 @@ export const authOptions: NextAuthOptions = {
     strategy: 'jwt',
   },
   secret: process.env.NEXTAUTH_SECRET,
-  debug: process.env.NODE_ENV === 'development',
+  debug: true, // Enable debug mode to see what's happening
 };

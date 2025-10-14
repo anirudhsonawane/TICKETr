@@ -11,7 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
-import { MapPin, Calendar, Clock, Users, Ticket, Loader2, Minus, Plus } from 'lucide-react';
+import { MapPin, Calendar, Clock, Users, Ticket, Loader2, Minus, Plus, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { IEvent } from '@/models/Event';
 
@@ -216,6 +216,22 @@ export default function PurchasePage() {
     <div className="min-h-screen bg-gray-50">
       <Header />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <Button
+            variant="ghost"
+            onClick={() => router.push('/')}
+            className="mb-4"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Back to Events
+          </Button>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">Purchase Tickets</h1>
+          <p className="text-gray-600">
+            Complete your ticket purchase for {event.name}
+          </p>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Event Details */}
           <div className="space-y-6">
@@ -230,12 +246,6 @@ export default function PurchasePage() {
               </div>
               <CardHeader>
                 <CardTitle className="text-2xl">{event.name}</CardTitle>
-                <div className="flex items-center space-x-2">
-                  <Badge variant="secondary">{event.category}</Badge>
-                  <Badge variant="outline">
-                    {event.availability} tickets left
-                  </Badge>
-                </div>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -272,7 +282,7 @@ export default function PurchasePage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
-                  <Ticket className="w-5 h-5" />
+                  <Ticket className="w-5 h-5 text-red-500" />
                   <span>Purchase Tickets</span>
                 </CardTitle>
               </CardHeader>
@@ -354,7 +364,7 @@ export default function PurchasePage() {
                 <Button
                   onClick={handlePayment}
                   disabled={processing || event.availability === 0}
-                  className="w-full"
+                  className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white border-0"
                   size="lg"
                 >
                   {processing ? (

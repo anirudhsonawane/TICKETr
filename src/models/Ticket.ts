@@ -1,10 +1,11 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema, Types } from 'mongoose';
 
 export interface ITicket extends Document {
   ticketId: string;
   userId: string;
-  eventId: string;
+  eventId: Types.ObjectId;
   passName?: string;
+  unitPrice: number;
   quantity: number;
   totalAmount: number;
   paymentId: string;
@@ -27,11 +28,16 @@ const TicketSchema = new Schema<ITicket>({
     required: true,
   },
   eventId: {
-    type: String,
+    type: Schema.Types.ObjectId,
+    ref: 'Event',
     required: true,
   },
   passName: {
     type: String,
+  },
+  unitPrice: {
+    type: Number,
+    required: true,
   },
   quantity: {
     type: Number,

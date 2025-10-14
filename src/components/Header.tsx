@@ -14,7 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Menu, X, User, Ticket, LogOut, Search } from 'lucide-react';
+import { Menu, X, User, Ticket, LogOut, Search, Settings } from 'lucide-react';
 import Logo from '@/components/Logo';
 
 interface HeaderProps {
@@ -41,6 +41,14 @@ export default function Header({ searchTerm = '', onSearchChange, onSearchSubmit
     router.push('/my-tickets');
     setIsMobileMenuOpen(false);
   };
+
+  const handleAdminPanel = () => {
+    router.push('/admin');
+    setIsMobileMenuOpen(false);
+  };
+
+  const ADMIN_EMAILS = ['anirudhsonawane111@gmail.com'];
+  const isAdmin = session?.user?.email && ADMIN_EMAILS.includes(session.user.email);
 
   return (
     <header className="bg-white border-b sticky top-0 z-50">
@@ -109,6 +117,12 @@ export default function Header({ searchTerm = '', onSearchChange, onSearchSubmit
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
+                    {isAdmin && (
+                      <DropdownMenuItem onClick={handleAdminPanel}>
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>Admin Panel</span>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem onClick={handleSignOut}>
                       <LogOut className="mr-2 h-4 w-4" />
                       <span>Sign out</span>
@@ -167,6 +181,12 @@ export default function Header({ searchTerm = '', onSearchChange, onSearchSubmit
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
+                    {isAdmin && (
+                      <DropdownMenuItem onClick={handleAdminPanel}>
+                        <Settings className="mr-2 h-4 w-4" />
+                        <span>Admin Panel</span>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem onClick={handleSignOut}>
                       <LogOut className="mr-2 h-4 w-4" />
                       <span>Sign out</span>

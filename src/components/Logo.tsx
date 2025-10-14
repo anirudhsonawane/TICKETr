@@ -35,7 +35,7 @@ export default function Logo({ size = 'md', className = '' }: LogoProps) {
     >
       {/* Orange circular icon with "Ai." */}
       <div className={`${classes.container} rounded-full bg-gradient-to-br from-orange-500 to-orange-600 flex items-center justify-center shadow-sm group-hover:shadow-md transition-all duration-300 group-hover:scale-105`}>
-        <span className={`${classes.aiText} font-bold text-white leading-none mb-0.5`}>
+        <span className={`${classes.aiText} font-bold text-white leading-none mb-0.5 group-hover:scale-[0.952] transition-transform duration-300`}>
           Ai.
         </span>
       </div>

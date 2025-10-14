@@ -15,13 +15,15 @@ import { toast } from 'sonner';
 
 export default function SignInPage() {
   const router = useRouter();
-  const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const [phoneLoading, setPhoneLoading] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
   const [otp, setOtp] = useState('');
   const [showOtp, setShowOtp] = useState(false);
 
   const handleGoogleSignIn = async () => {
-    setLoading(true);
+    setGoogleLoading(true);
     try {
       const result = await signIn('google', { 
         callbackUrl: '/',
@@ -39,14 +41,14 @@ export default function SignInPage() {
         } else {
           toast.error(`Sign in failed: ${result.error}. Check the console for details.`);
         }
-        setLoading(false);
+        setGoogleLoading(false);
       } else if (result?.ok) {
         toast.success('Signed in successfully!');
       }
     } catch (error) {
       console.error('Google sign in error:', error);
       toast.error('An error occurred. Please check your environment configuration and restart the dev server.');
-      setLoading(false);
+      setGoogleLoading(false);
     }
   };
 
@@ -56,7 +58,7 @@ export default function SignInPage() {
       return;
     }
 
-    setLoading(true);
+    setPhoneLoading(true);
     try {
       const response = await fetch('/api/auth/send-otp', {
         method: 'POST',
@@ -80,7 +82,7 @@ export default function SignInPage() {
       console.error('Phone sign in error:', error);
       toast.error('Failed to send OTP. Please try again.');
     } finally {
-      setLoading(false);
+      setPhoneLoading(false);
     }
   };
 
@@ -90,7 +92,7 @@ export default function SignInPage() {
       return;
     }
 
-    setLoading(true);
+    setOtpLoading(true);
     try {
       const result = await signIn('phone', {
         phoneNumber,
@@ -108,7 +110,7 @@ export default function SignInPage() {
       console.error('OTP verification error:', error);
       toast.error('Invalid OTP. Please try again.');
     } finally {
-      setLoading(false);
+      setOtpLoading(false);
     }
   };
 
@@ -154,11 +156,11 @@ export default function SignInPage() {
               {/* Google Sign In */}
               <Button
                 onClick={handleGoogleSignIn}
-                disabled={loading}
+                disabled={googleLoading}
                 variant="outline"
                 className="w-full border-2 hover:border-orange-500 hover:text-orange-600 transition-all duration-300"
               >
-                {loading ? (
+                {googleLoading ? (
                   <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                 ) : (
                   <Mail className="w-5 h-5 mr-2" />
@@ -194,10 +196,10 @@ export default function SignInPage() {
                   </div>
                   <Button
                     onClick={handlePhoneSignIn}
-                    disabled={loading}
+                    disabled={phoneLoading}
                     className="w-full h-11 bg-gradient-to-r from-orange-500 to-orange-600 hover:brightness-110 text-white transition-all duration-300"
                   >
-                    {loading ? (
+                    {phoneLoading ? (
                       <>
                         <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                         Sending OTP...
@@ -230,10 +232,10 @@ export default function SignInPage() {
                   <div className="space-y-2">
                     <Button
                       onClick={handleOtpVerification}
-                      disabled={loading}
+                      disabled={otpLoading}
                       className="w-full h-11 bg-gradient-to-r from-orange-500 to-orange-600 hover:brightness-110 text-white transition-all duration-300"
                     >
-                      {loading ? (
+                      {otpLoading ? (
                         <>
                           <Loader2 className="w-5 h-5 mr-2 animate-spin" />
                           Verifying...

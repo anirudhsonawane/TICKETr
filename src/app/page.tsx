@@ -45,7 +45,7 @@ export default function HomePage() {
 
   const fetchEvents = async () => {
     try {
-      const response = await fetch('/api/events');
+      const response = await fetch('/api/events?limit=3');
       const data = await response.json();
       setEvents(data.events || []);
     } catch (error) {
@@ -115,7 +115,7 @@ export default function HomePage() {
             <div className="flex items-center space-x-2 bg-white px-4 py-2 rounded-lg border">
               <Calendar className="w-4 h-4 text-gray-500" />
               <span className="text-sm font-medium text-gray-700">
-                {filteredEvents.length} Events
+                3 Events
               </span>
             </div>
           </div>

@@ -6,6 +6,7 @@ import Event from '@/models/Event';
 import User from '@/models/User';
 import { authOptions } from '@/lib/auth';
 import QRCode from 'qrcode';
+import { Types } from 'mongoose';
 
 export async function GET(request: NextRequest) {
   try {
@@ -21,13 +22,30 @@ export async function GET(request: NextRequest) {
     await dbConnect();
     
     const tickets = await Ticket.find({ userId: session.user.id })
-      .populate('eventId')
+      .populate({
+        path: 'eventId',
+        model: 'Event'
+      })
       .populate('userId', 'name email phoneNumber')
       .sort({ createdAt: -1 });
     
     console.log(`📊 Fetched ${tickets.length} tickets for user:`, session.user.email);
     
-    return NextResponse.json({ success: true, tickets });
+    // Debug: Log first ticket structure if tickets exist
+    if (tickets.length > 0) {
+      console.log('🔍 First ticket structure:', {
+        ticketId: tickets[0].ticketId,
+        eventId: tickets[0].eventId,
+        eventIdType: typeof tickets[0].eventId,
+        eventIdConstructor: tickets[0].eventId?.constructor?.name,
+        eventName: tickets[0].eventId?.name,
+        eventImage: tickets[0].eventId?.image,
+        eventLocation: tickets[0].eventId?.location?.name,
+        isEventPopulated: !!tickets[0].eventId?.name
+      });
+    }
+    
+    return NextResponse.json(tickets);
   } catch (error) {
     console.error('Error fetching tickets:', error);
     return NextResponse.json(
@@ -50,10 +68,10 @@ export async function POST(request: NextRequest) {
     
     await dbConnect();
     
-    const { eventId, passType, price, quantity } = await request.json();
+    const { eventId, passName, quantity, paymentId } = await request.json();
     
     // Validate input
-    if (!eventId || !passType || !price || !quantity) {
+    if (!eventId || !quantity || !paymentId) {
       return NextResponse.json(
         { success: false, error: 'Missing required fields' },
         { status: 400 }
@@ -78,19 +96,27 @@ export async function POST(request: NextRequest) {
       );
     }
     
+    // Calculate price based on pass type
+    const pass = passName ? event.passes?.find(p => p.name === passName) : null;
+    const unitPrice = pass ? pass.price : event.price;
+    const totalAmount = unitPrice * quantity;
+    
+    // Generate unique ticket ID
+    const ticketId = `TKT-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
+    
     // Generate unique QR code data
     const qrCodeData = JSON.stringify({
-      ticketId: `TKT-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`,
+      ticketId,
       userId: session.user.id,
       userName: user.name,
       userEmail: user.email,
       userPhone: user.phoneNumber,
       eventId: event._id,
       eventName: event.name,
-      passType,
+      passName: passName || 'General',
       quantity,
-      price,
-      totalAmount: price * quantity,
+      unitPrice,
+      totalAmount,
       purchaseDate: new Date().toISOString(),
       timestamp: Date.now(),
     });
@@ -108,29 +134,35 @@ export async function POST(request: NextRequest) {
     // Create ticket
     const ticket = await Ticket.create({
       userId: session.user.id,
-      eventId: event._id,
-      passType,
-      price,
+      eventId: new Types.ObjectId(event._id),
+      ticketId,
+      passName: passName || 'General',
+      unitPrice,
       quantity,
+      totalAmount,
       qrCode: qrCodeImage,
       status: 'active',
-      purchaseDate: new Date(),
+      paymentId,
+      createdAt: new Date(),
     });
 
     console.log('✅ Ticket purchased successfully:', {
       ticketId: ticket._id,
       user: user.email,
       event: event.name,
-      passType,
+      passName: passName || 'General',
       quantity,
-      totalAmount: price * quantity,
+      totalAmount,
     });
     
     // Update event available tickets
-    const pass = event.passes.find(p => p.name === passType);
     if (pass && pass.available >= quantity) {
       pass.available -= quantity;
-      event.availableTickets -= quantity;
+      event.availability -= quantity;
+      await event.save();
+    } else if (!pass) {
+      // For general tickets, update the main availability
+      event.availability -= quantity;
       await event.save();
     }
     

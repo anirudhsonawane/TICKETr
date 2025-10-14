@@ -4,12 +4,13 @@ import Event from '@/models/Event';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     await connectDB();
     
-    const event = await Event.findById(params.id);
+    const { id } = await params;
+    const event = await Event.findById(id);
     
     if (!event) {
       return NextResponse.json(

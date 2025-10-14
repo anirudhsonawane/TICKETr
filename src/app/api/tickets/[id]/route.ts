@@ -6,7 +6,7 @@ import { authOptions } from '@/lib/auth';
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -20,10 +20,14 @@ export async function GET(
     
     await connectDB();
     
+    const { id } = await params;
     const ticket = await Ticket.findOne({
-      ticketId: params.id,
+      ticketId: id,
       userId: session.user.id,
-    }).populate('eventId');
+    }).populate({
+      path: 'eventId',
+      model: 'Event'
+    });
     
     if (!ticket) {
       return NextResponse.json(
@@ -31,6 +35,17 @@ export async function GET(
         { status: 404 }
       );
     }
+    
+    // Debug: Log ticket structure
+    console.log('🎫 Individual ticket fetched:', {
+      ticketId: ticket.ticketId,
+      eventId: ticket.eventId,
+      eventIdType: typeof ticket.eventId,
+      eventName: ticket.eventId?.name,
+      eventImage: ticket.eventId?.image,
+      eventLocation: ticket.eventId?.location?.name,
+      isEventPopulated: !!ticket.eventId?.name
+    });
     
     return NextResponse.json(ticket);
   } catch (error) {
