@@ -82,7 +82,7 @@ export const authOptions: NextAuthOptions = {
             image: user.image,
             provider: provider,
             googleId: account?.provider === 'google' ? account?.providerAccountId : undefined,
-            phone: (user as any).phoneNumber || null,
+              phone: (user as { phoneNumber?: string }).phoneNumber || null,
           });
           console.log('✅ New user created:', existingUser.email, '| Provider:', provider);
         } else {
@@ -114,7 +114,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user, account }) {
       if (user) {
         token.id = user.id;
-        token.phoneNumber = (user as any).phoneNumber;
+        token.phoneNumber = (user as { phoneNumber?: string }).phoneNumber;
       }
       return token;
     },

@@ -11,7 +11,7 @@ export async function GET(
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session?.user?.id) {
+    if (!session?.user || !(session.user as any).id) {
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -23,7 +23,7 @@ export async function GET(
     const { id } = await params;
     const ticket = await Ticket.findOne({
       ticketId: id,
-      userId: session.user.id,
+      userId: (session.user as any).id,
     }).populate({
       path: 'eventId',
       model: 'Event'

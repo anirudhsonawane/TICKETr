@@ -110,7 +110,7 @@ export default function PurchasePage() {
           name: 'TICKETr',
           description: `Ticket for ${event.name}`,
           order_id: order.id,
-          handler: async function (response: any) {
+          handler: async function (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) {
             try {
               // Verify payment
               const verifyResponse = await fetch('/api/payment/verify', {

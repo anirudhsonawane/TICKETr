@@ -134,9 +134,9 @@ export default function MyTicketsPage() {
                         </Badge>
                       </div>
                       <div className="flex items-center space-x-6 text-sm text-gray-600">
-                        <span>
-                          <strong>Pass:</strong> {ticket.passName || 'General'}
-                        </span>
+                     <span>
+                       <strong>Pass:</strong> {ticket.passName || 'General'}
+                     </span>
                         <span>
                           <strong>Count:</strong> {ticket.quantity}
                         </span>

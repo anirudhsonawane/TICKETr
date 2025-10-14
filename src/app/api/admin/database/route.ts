@@ -45,8 +45,8 @@ export async function GET() {
         })),
         tickets: tickets.map(ticket => ({
           id: ticket._id,
-          user: (ticket as any).userId?.name || 'Unknown',
-          event: (ticket as any).eventId?.name || 'Unknown',
+          user: (ticket as unknown as { userId?: { name?: string } }).userId?.name || 'Unknown',
+          event: (ticket as unknown as { eventId?: { name?: string } }).eventId?.name || 'Unknown',
           passType: ticket.passType,
           quantity: ticket.quantity,
           price: ticket.price,
