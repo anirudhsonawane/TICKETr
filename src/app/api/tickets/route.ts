@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session?.user || !(session.user as any).id) {
+    if (!session?.user || !(session.user as { id?: string }).id) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }
@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
     
     await dbConnect();
     
-    const tickets = await Ticket.find({ userId: (session.user as any).id })
+    const tickets = await Ticket.find({ userId: (session.user as { id: string }).id })
       .populate({
         path: 'eventId',
         model: 'Event'
@@ -59,7 +59,7 @@ export async function POST(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
-    if (!session?.user || !(session.user as any).id) {
+    if (!session?.user || !(session.user as { id?: string }).id) {
       return NextResponse.json(
         { success: false, error: 'Unauthorized' },
         { status: 401 }
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get user details
-    const user = await User.findById((session.user as any).id);
+    const user = await User.findById((session.user as { id: string }).id);
     if (!user) {
       return NextResponse.json(
         { success: false, error: 'User not found' },
@@ -97,7 +97,7 @@ export async function POST(request: NextRequest) {
     }
     
     // Calculate price based on pass type
-    const pass = passName ? event.passes?.find((p: any) => p.name === passName) : null;
+    const pass = passName ? event.passes?.find((p: { name: string; price: number }) => p.name === passName) : null;
     const unitPrice = pass ? pass.price : event.price;
     const totalAmount = unitPrice * quantity;
     
@@ -107,7 +107,7 @@ export async function POST(request: NextRequest) {
     // Generate unique QR code data
     const qrCodeData = JSON.stringify({
       ticketId,
-      userId: (session.user as any).id,
+      userId: (session.user as { id: string }).id,
       userName: user.name,
       userEmail: user.email,
       userPhone: user.phoneNumber,
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
     
     // Create ticket
     const ticket = await Ticket.create({
-      userId: (session.user as any).id,
+      userId: (session.user as { id: string }).id,
       eventId: new Types.ObjectId(event._id),
       ticketId,
       passName: passName || 'General',

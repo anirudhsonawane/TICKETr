@@ -40,5 +40,5 @@ async function connectDB() {
 export default connectDB;
 
 declare global {
-  var mongoose: any;
+  var mongoose: unknown;
 }

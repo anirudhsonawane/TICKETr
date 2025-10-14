@@ -13,7 +13,10 @@ import { Separator } from '@/components/ui/separator';
 import { ArrowLeft, Calendar, Clock, MapPin, Ticket, Loader2, Printer } from 'lucide-react';
 import { ITicket } from '@/models/Ticket';
 
-interface TicketWithEvent extends ITicket {
+interface TicketWithEvent {
+  _id: string;
+  ticketId: string;
+  userId: string;
   eventId: {
     _id: string;
     name: string;
@@ -26,6 +29,12 @@ interface TicketWithEvent extends ITicket {
     image: string;
     organizer: string;
   };
+  passType: string;
+  passName: string;
+  quantity: number;
+  price: number;
+  status: string;
+  purchaseDate: Date;
 }
 
 export default function TicketPage() {
